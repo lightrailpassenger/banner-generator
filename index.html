@@ -32,7 +32,7 @@
             import getRandomText from "./getRandomText.js";
             import parseParams from "./parseParams.js";
 
-            initialize();
+            await initialize();
             const searchParams = Object.fromEntries(new URLSearchParams(new URL(window.location.href).search));
             const parsed = parseParams(searchParams);
             const placeholder = getRandomText();
