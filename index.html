@@ -25,37 +25,59 @@
             integrity="sha384-Yt04PyOEMACZAeA8wPIIyUgLnSZ5GM/dHFB71SM1RVxPG7quZnKdCtfZaPHFyDMJ"
         ></script>
         <script type="module" src="./draw.js"></script>
+        <script type="module" src="./getRandomText.js"></script>
         <script type="module" src="./parseParams.js"></script>
         <script type="module">
             import { initialize, draw } from "./draw.js";
+            import getRandomText from "./getRandomText.js";
             import parseParams from "./parseParams.js";
 
             initialize();
             const searchParams = Object.fromEntries(new URLSearchParams(new URL(window.location.href).search));
             const parsed = parseParams(searchParams);
+            const placeholder = getRandomText();
+            const bannerInput = document.getElementById("banner-input");
 
-            document.getElementById('banner-input').value = parsed.t;
-            document.getElementById('banner-width').value = parsed.w;
-            document.getElementById('banner-bg').value = `#${parsed.bg}`;
-            document.getElementById('banner-fg').value = `#${parsed.fg}`;
+            if (parsed.t) {
+                bannerInput.value = parsed.t;
+            } else {
+                bannerInput.value = "";
+                bannerInput.placeholder = placeholder;
+            }
+
+            bannerInput.addEventListener("keydown", () => {
+                if (bannerInput.value === "") {
+                    bannerInput.value = bannerInput.placeholder;
+                    onChange({ navigate: true });
+                }
+            });
+            bannerInput.addEventListener("change", (event) => {
+                if (bannerInput.value === "" && event.key === "Enter") {
+                    bannerInput.placeholder = getRandomText();
+                }
+            });
+
+            document.getElementById("banner-width").value = parsed.w;
+            document.getElementById("banner-bg").value = `#${parsed.bg}`;
+            document.getElementById("banner-fg").value = `#${parsed.fg}`;
 
             const mapping = {
-                'banner-input': 't',
-                'banner-width': 'w',
-                'banner-bg': 'bg',
-                'banner-fg': 'fg',
+                "banner-input": "t",
+                "banner-width": "w",
+                "banner-bg": "bg",
+                "banner-fg": "fg",
             };
-            const onChange = (navigate) => {
+            const onChange = ({ navigate, redraw }) => {
                 const searchParams = new URLSearchParams();
 
                 for (const [id, key] of Object.entries(mapping)) {
                     const ele = document.getElementById(id);
-                    const { value, type } = ele;
+                    const { value, placeholder, type } = ele;
 
-                    if (type === 'color') {
+                    if (type === "color") {
                         searchParams.set(key, value.substring(1));
                     } else {
-                        searchParams.set(key, value);
+                        searchParams.set(key, value || placeholder);
                     }
                 }
 
@@ -63,24 +85,28 @@
                     window.history.replaceState({}, "", `./?${searchParams}`);
                 }
 
-                const canvas = document.getElementById('main-canvas');
+                const canvas = document.getElementById("main-canvas");
 
-                draw(
-                    canvas,
-                    searchParams.get('t'),
-                    Number(searchParams.get('w')),
-                    `#${searchParams.get('fg')}`,
-                    `#${searchParams.get('bg')}`,
-                    128, // TODO
-                );
-                document.getElementById("download").href = canvas.toDataURL("image/png");
+                if (redraw) {
+                    draw(
+                        canvas,
+                        searchParams.get("t"),
+                        Number(searchParams.get("w")),
+                        `#${searchParams.get("fg")}`,
+                        `#${searchParams.get("bg")}`,
+                        128, // TODO
+                    );
+                    document.getElementById("download").href = canvas.toDataURL("image/png");
+                }
             };
 
             for (const id of Object.keys(mapping)) {
-                document.getElementById(id).addEventListener('change', onChange.bind(true));
+                document.getElementById(id).addEventListener("input", () => {
+                    onChange({ navigate: true, redraw: true });
+                });
             }
 
-            onChange(false);
+            onChange({ redraw: true });
         </script>
         <script type="text/stylesheet">
             canvas {
@@ -91,11 +117,14 @@
     </head>
     <body>
         <div class="container min-vh-100 d-flex flex-column">
+            <div class="row">
+                <h1 id="title">Banner Generator</h1>
+            </div>
             <div class="d-flex flex-row justify-content-center flex-grow-0 flex-shrink-0 align-items-center row flex-grow-1">
                 <canvas class="w-auto" id="main-canvas">
                 </canvas>
             </div>
-            <div class="row">
+            <div class="row mb-5">
                 <div class="d-flex flex-row col-12 col-md-5">
                     <input class="w-100 align-self-center" id="banner-input"></input>
                 </div>
