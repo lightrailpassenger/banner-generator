@@ -16,15 +16,46 @@ const draw = (canvas, text, wrapWidth, fg, bg, fontSize) => {
 
     const { fontBoundingBoxAscent, fontBoundingBoxDescent, width } = ctx.measureText(text);
     const height = fontBoundingBoxAscent - fontBoundingBoxDescent + 50; // TODO: Margin
+    const measuredWidth = width + 10;
+    const chunks = [];
 
-    canvas.width = Math.min(wrapWidth, width + 10);
-    canvas.height = height;
+    if (wrapWidth <= measuredWidth) {
+        // chunk
+        let current = "";
+
+        for (const char of text) {
+            const { width } = ctx.measureText(`${current}${char}`);
+
+            if (width > wrapWidth - 10) {
+                chunks.push(current);
+                current = char;
+            } else {
+                current = `${current}${char}`;
+            }
+        }
+
+        chunks.push(current);
+        canvas.width = wrapWidth;
+        canvas.height = (fontBoundingBoxAscent - fontBoundingBoxDescent + 50) * chunks.length;
+    } else {
+        chunks.push(text);
+        canvas.width = measuredWidth;
+        canvas.height = height;
+    }
 
     ctx.font = `bold ${fontSize}px SimHei`;
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = fg;
-    ctx.fillText(text, 5, canvas.height - 25); // TODO: Wrapping
+
+    let accHeight = fontBoundingBoxAscent - fontBoundingBoxDescent + 25;
+
+    for (let chunk of chunks) {
+        const { width: chunkWidth } = ctx.measureText(chunk);
+
+        ctx.fillText(chunk, (canvas.width - chunkWidth) / 2, accHeight);
+        accHeight += (fontBoundingBoxAscent - fontBoundingBoxDescent + 50);
+    }
 };
 
 export { initialize, draw };
