@@ -4,9 +4,8 @@ const initialize = async () => {
     const font = new FontFace("SimHei", `url(./lib/font/SimHei.ttf)`);
 
     document.fonts.add(font);
-    font.load();
 
-    await document.fonts.ready;
+    await font.load();
 };
 
 const draw = (canvas, text, wrapWidth, fg, bg, fontSize) => {
