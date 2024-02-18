@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+            crossorigin="anonymous"
+        >
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"
+        ></script>
+        <script type="importmap">
+            {
+                "imports": {
+                    "yup": "https://cdn.jsdelivr.net/npm/yup@1.3.3/+esm"
+                }
+            }
+        </script>
+        <script
+            type="module"
+            src="https://cdn.jsdelivr.net/npm/yup@1.3.3/+esm"
+            integrity="sha384-Yt04PyOEMACZAeA8wPIIyUgLnSZ5GM/dHFB71SM1RVxPG7quZnKdCtfZaPHFyDMJ"
+        ></script>
+        <script type="module" src="./parseParams.js"></script>
+        <script type="module">
+            import parseParams from "./parseParams.js";
+
+            const searchParams = Object.fromEntries(new URLSearchParams(new URL(window.location.href).search));
+            const parsed = parseParams(searchParams);
+
+            document.getElementById('banner-input').value = parsed.t;
+            document.getElementById('banner-width').value = parsed.w;
+            document.getElementById('banner-bg').value = `#${parsed.bg}`;
+            document.getElementById('banner-fg').value = `#${parsed.fg}`;
+
+            const mapping = {
+                'banner-input': 't',
+                'banner-width': 'w',
+                'banner-bg': 'bg',
+                'banner-fg': 'fg',
+            };
+            const onChange = (event) => {
+                const searchParams = new URLSearchParams();
+
+                for (const [id, key] of Object.entries(mapping)) {
+                    const ele = document.getElementById(id);
+                    const { value, type } = ele;
+
+                    if (type === 'color') {
+                        searchParams.set(key, value.substring(1));
+                    } else {
+                        searchParams.set(key, value);
+                    }
+                }
+
+                window.history.replaceState({}, "", `./?${searchParams}`);
+            };
+
+            for (const id of Object.keys(mapping)) {
+                document.getElementById(id).addEventListener('change', onChange);
+            }
+        </script>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <body>
+        <div class="container min-vh-100 d-flex flex-column">
+            <div class="row flex-grow-1">
+                <canvas id="main-canvas">
+                </canvas>
+            </div>
+            <div class="row">
+                <div class="d-flex flex-row col-12 col-md-5">
+                    <input class="w-100 align-self-center" id="banner-input"></input>
+                </div>
+                <div class="d-flex flex-column align-items-flex-start col-4 col-sm-3 col-md-2">
+                    <label for="banner-width">Width</label>
+                    <input class="w-90" type="number" id="banner-width" min="10" max="10000"></input>
+                </div>
+                <span class="d-flex flex-column align-items-flex-start col-4 col-sm-3 col-md-2">
+                    <label for="banner-bg">Background</label>
+                    <input type="color" id="banner-bg"></input>
+                </span>
+                <div class="d-flex flex-column align-items-flex-start col-4 col-sm-3 col-md-2">
+                    <label for="banner-fg">Foreground</label>
+                    <input type="color" id="banner-fg"></input>
+                </div>
+                <div class="d-sm-none w-100"></div>
+                <div class="col-12 col-sm-3 col-md-1">
+                    <a download="banner.png">Download</a>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
