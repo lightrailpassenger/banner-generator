@@ -3,9 +3,9 @@ import * as yup from "yup";
 const colorRegex = /^[0-9a-z]{6}$/;
 const schema = yup.object({
     w: yup.number().required().min(10).max(10000),
-    t: yup.string(),
-    bg: yup.string().matches(colorRegex),
-    fg: yup.string().matches(colorRegex),
+    t: yup.string().required(),
+    bg: yup.string().required().matches(colorRegex),
+    fg: yup.string().required().matches(colorRegex),
 });
 
 function parseParams(params) {
