@@ -42,7 +42,7 @@ const draw = (canvas, text, wrapWidth, fg, bg, fontSize) => {
         canvas.height = height;
     }
 
-    ctx.font = `bold ${fontSize}px SimHei`;
+    ctx.font = `${fontSize}px SimHei`;
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = fg;
