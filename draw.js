@@ -11,7 +11,7 @@ const initialize = async () => {
 const draw = (canvas, text, wrapWidth, fg, bg, fontSize) => {
     const ctx = canvas.getContext('2d');
 
-    ctx.font = `bold ${fontSize}px SimHei`;
+    ctx.font = `${fontSize}px SimHei`;
 
     const { fontBoundingBoxAscent, fontBoundingBoxDescent, width } = ctx.measureText(text);
     const height = fontBoundingBoxAscent - fontBoundingBoxDescent + 50; // TODO: Margin
