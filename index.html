@@ -63,15 +63,6 @@
             document.getElementById("banner-bg").value = `#${parsed.bg}`;
             document.getElementById("banner-fg").value = `#${parsed.fg}`;
 
-            document.getElementById("button-to-trad").addEventListener("click", () => {
-                const { value } = bannerInput;
-                bannerInput.value = toTraditional(value);
-            });
-            document.getElementById("button-to-simp").addEventListener("click", () => {
-                const { value } = bannerInput;
-                bannerInput.value = toSimplified(value);
-            });
-
             const mapping = {
                 "banner-input": "t",
                 "banner-width": "w",
@@ -116,6 +107,19 @@
                     onChange({ navigate: true, redraw: true });
                 });
             }
+
+            document.getElementById("button-to-trad").addEventListener("click", () => {
+                const { value } = bannerInput;
+
+                bannerInput.value = toTraditional(value);
+                onChange({ navigate: true, redraw: true });
+            });
+            document.getElementById("button-to-simp").addEventListener("click", () => {
+                const { value } = bannerInput;
+
+                bannerInput.value = toSimplified(value);
+                onChange({ navigate: true, redraw: true });
+            });
 
             onChange({ redraw: true });
         </script>
