@@ -27,10 +27,12 @@
         <script type="module" src="./draw.js"></script>
         <script type="module" src="./getRandomText.js"></script>
         <script type="module" src="./parseParams.js"></script>
+        <script type="module" src="./translate.js"></script>
         <script type="module">
             import { initialize, draw } from "./draw.js";
             import getRandomText from "./getRandomText.js";
             import parseParams from "./parseParams.js";
+            import { toTraditional, toSimplified } from "./translate.js";
 
             await initialize();
             const searchParams = Object.fromEntries(new URLSearchParams(new URL(window.location.href).search));
@@ -60,6 +62,15 @@
             document.getElementById("banner-width").value = parsed.w;
             document.getElementById("banner-bg").value = `#${parsed.bg}`;
             document.getElementById("banner-fg").value = `#${parsed.fg}`;
+
+            document.getElementById("button-to-trad").addEventListener("click", () => {
+                const { value } = bannerInput;
+                bannerInput.value = toTraditional(value);
+            });
+            document.getElementById("button-to-simp").addEventListener("click", () => {
+                const { value } = bannerInput;
+                bannerInput.value = toSimplified(value);
+            });
 
             const mapping = {
                 "banner-input": "t",
@@ -113,6 +124,7 @@
                 image-rendering: pixelated;
             }
         </script>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
     </head>
     <body>
@@ -125,7 +137,13 @@
                 </canvas>
             </div>
             <div class="row mb-5">
-                <div class="d-flex flex-row col-12 col-md-5">
+                <div class="d-flex flex-column col-12 col-md-5">
+                    <span class="d-inline-flex flex-row">
+                        <label for="banner-input">Text</label>
+                        <span class="flex-grow-1 flex-shrink-1"></span>
+                        <button class="btn btn-link p-0 flex-grow-0 flex-shrink-0" id="button-to-trad">繁</button>
+                        <button class="btn btn-link p-0 flex-grow-0 flex-shrink-0" id="button-to-simp">簡</button>
+                    </span>
                     <input class="w-100 align-self-center" id="banner-input"></input>
                 </div>
                 <div class="d-flex flex-column align-items-flex-start col-4 col-sm-3 col-md-2">
