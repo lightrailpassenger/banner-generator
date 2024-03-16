@@ -34,7 +34,9 @@
             import parseParams from "./parseParams.js";
             import { toTraditional, toSimplified } from "./translate.js";
 
-            const searchParams = Object.fromEntries(new URLSearchParams(new URL(window.location.href).search));
+            const url = new URL(window.location.href);
+            const { host, search } = url;
+            const searchParams = Object.fromEntries(new URLSearchParams(search));
             const parsed = parseParams(searchParams);
             const placeholder = getRandomText();
             const bannerInput = document.getElementById("banner-input");
@@ -46,6 +48,7 @@
                 bannerInput.placeholder = placeholder;
             }
 
+            document.querySelector("meta[property='og:url']").setAttribute("content", host);
             bannerInput.addEventListener("keydown", () => {
                 if (bannerInput.value === "" && event.key === "Enter") {
                     bannerInput.value = bannerInput.placeholder;
@@ -87,17 +90,25 @@
                 }
 
                 const canvas = document.getElementById("main-canvas");
+                const text = searchParams.get("t");
 
                 if (redraw) {
                     draw(
                         canvas,
-                        searchParams.get("t"),
+                        text,
                         Number(searchParams.get("w")),
                         `#${searchParams.get("fg")}`,
                         `#${searchParams.get("bg")}`,
                         128, // TODO
                     );
-                    document.getElementById("download").href = canvas.toDataURL("image/png");
+
+                    const imageDataURL = canvas.toDataURL("image/png");
+
+                    document.getElementById("download").href = imageDataURL;
+                    document.querySelector("meta[property='og:image']").setAttribute("content", imageDataURL);
+                    document.querySelector("meta[property='og:image:width']").setAttribute("content", canvas.width);
+                    document.querySelector("meta[property='og:image:height']").setAttribute("content", canvas.height);
+                    document.querySelector("meta[property='og:image:alt']").setAttribute("content", text);
                 }
             };
 
@@ -140,6 +151,13 @@
         </script>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta property="og:title" content="Banner Generator">
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="">
+        <meta property="og:image" content="">
+        <meta property="og:image:width" content="">
+        <meta property="og:image:height" content="">
+        <meta property="og:image:alt" content="">
     </head>
     <body>
         <div class="container min-vh-100 d-flex flex-column">
