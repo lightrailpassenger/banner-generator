@@ -35,7 +35,7 @@
             import { toTraditional, toSimplified } from "./translate.js";
 
             const url = new URL(window.location.href);
-            const { host, search } = url;
+            const { origin, search } = url;
             const searchParams = Object.fromEntries(new URLSearchParams(search));
             const parsed = parseParams(searchParams);
             const placeholder = getRandomText();
@@ -56,7 +56,7 @@
             };
 
             const ogURLMeta = createMeta("og:url");
-            ogURLMeta.setAttribute("content", host);
+            ogURLMeta.setAttribute("content", origin);
 
             const head = document.getElementsByTagName("head")[0];
             let isFirstRun = true;
