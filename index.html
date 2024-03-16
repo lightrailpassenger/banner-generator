@@ -118,6 +118,8 @@
                     if (isFirstRun) {
                         isFirstRun = false;
 
+                        // FIXME: Can these really be done by JavaScript?
+                        head.appendchild(createMeta("og:description"));
                         head.appendChild(createMeta("og:image"));
                         head.appendChild(createMeta("og:image:width"));
                         head.appendChild(createMeta("og:image:height"));
@@ -127,6 +129,7 @@
                     const imageDataURL = canvas.toDataURL("image/png");
 
                     document.getElementById("download").href = imageDataURL;
+                    document.querySelector("meta[property='og:description']").setAttribute("content", text);
                     document.querySelector("meta[property='og:image']").setAttribute("content", imageDataURL);
                     document.querySelector("meta[property='og:image:width']").setAttribute("content", canvas.width);
                     document.querySelector("meta[property='og:image:height']").setAttribute("content", canvas.height);
